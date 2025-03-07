@@ -1,0 +1,285 @@
+<!-- results.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuMatch - Results</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 95vw;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+        nav a {
+            text-decoration: none;
+            color: #004080;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        section {
+            margin-top: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .summary {
+            background: #e0f0ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .resume-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            break-inside: avoid;
+        }
+        .resume-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .score-high {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+        .score-medium {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+        .score-low {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+        .resume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .resume-name {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        .resume-score {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: #f0f0f0;
+        }
+        .resume-section {
+            margin-top: 10px;
+        }
+        .resume-section h4 {
+            color: #004080;
+            margin-bottom: 5px;
+        }
+        .resume-section ul {
+            margin-top: 5px;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .btn {
+            display: inline-block;
+            background: #004080;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background: #003366;
+        }
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: #f8d7da;
+            border-radius: 5px;
+            color: #721c24;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        footer a {
+            color: #004080;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        /* Columns for larger screens */
+        .results-container {
+            column-count: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .results-container {
+                column-count: 2;
+                column-gap: 20px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .results-container {
+                column-count: 3;
+                column-gap: 20px;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            nav {
+                margin-top: 10px;
+            }
+            .resume-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .resume-score {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Navbar -->
+    <header>
+        <h1>ResuMatch</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('resume_submission') }}">Upload Resumes</a>
+        </nav>
+    </header>
+
+    <!-- Results Section -->
+    <section>
+        <h2>Resume Ranking Results</h2>
+        
+        <div class="summary">
+            <h3>Results Summary</h3>
+            <p>We analyzed {{ results|length }} resumes against your job description. Here are the candidates ranked by match score.</p>
+        </div>
+        
+        {% if results %}
+            <div class="results-container">
+                {% for resume in results %}
+                    {% set score_class = 'score-high' if resume.score > 0.7 else ('score-medium' if resume.score > 0.5 else 'score-low') %}
+                    <div class="resume-card {{ score_class }}">
+                        <div class="resume-header">
+                            <div class="resume-name">
+                                {{ resume.resume_data.name }}
+                            </div>
+                            <div class="resume-score">
+                                {% set percentage = (resume.score * 100)|int %}
+                                {{ percentage }}% Match
+                            </div>
+                        </div>
+                        
+                        <div class="resume-section">
+                            <h4>Contact</h4>
+                            <p>{{ resume.resume_data.contact }}</p>
+                        </div>
+                        
+                        <div class="resume-section">
+                            <h4>Skills</h4>
+                            <div>
+                                {% for skill in resume.resume_data.skills %}
+                                    <span class="skill-tag">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="resume-section">
+                            <h4>Work Experience</h4>
+                            <ul>
+                                {% for exp in resume.resume_data.work_experience %}
+                                    <li>{{ exp }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="resume-section">
+                            <h4>Education</h4>
+                            <ul>
+                                {% for edu in resume.resume_data.education %}
+                                    <li>{{ edu }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        {% if resume.resume_data.certifications %}
+                            <div class="resume-section">
+                                <h4>Certifications</h4>
+                                <ul>
+                                    {% for cert in resume.resume_data.certifications %}
+                                        <li>{{ cert }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="resume-section">
+                            <small>File: {{ resume.filename }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <a href="{{ url_for('resume_submission') }}" class="btn">Upload More Resumes</a>
+        {% else %}
+            <div class="no-results">
+                <h3>No Results Found</h3>
+                <p>There were no results found or an error occurred during processing.</p>
+                <a href="{{ url_for('resume_submission') }}" class="btn">Try Again</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 ResuMatch. All rights reserved.</p>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+    </footer>
+</div>
+
+</body>
+</html>
