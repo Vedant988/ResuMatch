@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResuMatch - Compare Resumes</title>
+    <!-- <link rel="stylesheet" href="../static/compare.css"> -->
+    <link rel="stylesheet" href="../static/compare_css.css">
+  </head>
+  <body>
+    <div class="container">
+      <!-- Navbar -->
+      <header>
+        <h1>ResuMatch</h1>
+        <nav>
+          <a href="{{ url_for('index') }}">Home</a>
+          <a href="{{ url_for('resume_submission') }}" class="active">Upload Resumes</a>
+          <a href="{{ url_for('compare_resume') }}" class="active-page">Compare Resume</a>
+      </nav>
+      </header>
+
+      <h1 class="page-title">Compare Resume</h1>
+
+      <form
+        id="compareForm"
+        action="{{ url_for('compare_candidates') }}"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="comparison-container">
+          <div class="upload-box" id="uploadBox1">
+            <div class="upload-icon">📄</div>
+            <h3 class="upload-title">Upload Candidate 1 Resume</h3>
+            <p class="upload-instruction">
+              Drag & drop your resume here or click to browse
+            </p>
+            <input
+              type="file"
+              id="fileInputResume1"
+              name="resume1"
+              accept=".pdf"
+              style="display: none"
+            />
+            <button
+              type="button"
+              class="btn"
+              onclick="document.getElementById('fileInputResume1').click()"
+            >
+              Choose File
+            </button>
+            <p
+              id="fileNameResume1"
+              style="margin-top: 10px; font-size: 0.9em"
+            ></p>
+          </div>
+
+          <div class="vs-circle">VS</div>
+
+          <div class="upload-box" id="uploadBox2">
+            <div class="upload-icon">📄</div>
+            <h3 class="upload-title">Upload Candidate 2 Resume</h3>
+            <p class="upload-instruction">
+              Drag & drop your resume here or click to browse
+            </p>
+            <input
+              type="file"
+              id="fileInputResume2"
+              name="resume2"
+              accept=".pdf"
+              style="display: none"
+            />
+            <button
+              type="button"
+              class="btn"
+              onclick="document.getElementById('fileInputResume2').click()"
+            >
+              Choose File
+            </button>
+            <p
+              id="fileNameResume2"
+              style="margin-top: 10px; font-size: 0.9em"
+            ></p>
+          </div>
+        </div>
+
+        <div
+          id="compareButtonContainer"
+          style="text-align: center; margin: 20px 0; display: none"
+        >
+          <button
+            type="button"
+            id="compareButton"
+            class="btn"
+            style="
+              background-color: #3498db;
+              color: white;
+              padding: 12px 30px;
+              font-size: 1.1em;
+            "
+          >
+            Compare Resumes
+          </button>
+        </div>
+      </form>
+
+      <div id="loadingSection" class="loading hidden">
+        <div class="loading-spinner"></div>
+        <p>Analyzing resumes and generating comparison...</p>
+      </div>
+
+      <div id="resultSection" class="hidden">
+        <!-- This section will be populated by JavaScript after form submission -->
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const fileInput1 = document.getElementById("fileInputResume1");
+          const fileInput2 = document.getElementById("fileInputResume2");
+          const fileNameDisplay1 = document.getElementById("fileNameResume1");
+          const fileNameDisplay2 = document.getElementById("fileNameResume2");
+          const compareButtonContainer = document.getElementById(
+            "compareButtonContainer"
+          );
+          const compareButton = document.getElementById("compareButton");
+          const loadingSection = document.getElementById("loadingSection");
+          const resultSection = document.getElementById("resultSection");
+          const compareForm = document.getElementById("compareForm");
+
+          // Handle file selection for resume 1
+          fileInput1.addEventListener("change", function () {
+            if (this.files.length > 0) {
+              fileNameDisplay1.textContent = this.files[0].name;
+              checkBothFilesUploaded();
+            }
+          });
+
+          // Handle file selection for resume 2
+          fileInput2.addEventListener("change", function () {
+            if (this.files.length > 0) {
+              fileNameDisplay2.textContent = this.files[0].name;
+              checkBothFilesUploaded();
+            }
+          });
+
+          // Check if both files are uploaded to show the compare button
+          function checkBothFilesUploaded() {
+            if (fileInput1.files.length > 0 && fileInput2.files.length > 0) {
+              compareButtonContainer.style.display = "block";
+            } else {
+              compareButtonContainer.style.display = "none";
+            }
+          }
+
+          // Handle the compare button click
+          compareButton.addEventListener("click", function () {
+            if (fileInput1.files.length > 0 && fileInput2.files.length > 0) {
+              loadingSection.classList.remove("hidden");
+              resultSection.classList.add("hidden");
+
+              const formData = new FormData();
+              formData.append("resume1", fileInput1.files[0]);
+              formData.append("resume2", fileInput2.files[0]);
+
+              // Submit the form
+              compareForm.submit();
+            }
+          });
+
+          // Drag and drop functionality for upload box 1
+          const uploadBox1 = document.getElementById("uploadBox1");
+
+          uploadBox1.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            uploadBox1.style.borderColor = "#3498db";
+            uploadBox1.style.backgroundColor = "#1a2e4f";
+          });
+
+          uploadBox1.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            uploadBox1.style.borderColor = "";
+            uploadBox1.style.backgroundColor = "#12213a";
+          });
+
+          uploadBox1.addEventListener("drop", function (e) {
+            e.preventDefault();
+            uploadBox1.style.borderColor = "";
+            uploadBox1.style.backgroundColor = "#12213a";
+
+            if (e.dataTransfer.files.length > 0) {
+              fileInput1.files = e.dataTransfer.files;
+              fileNameDisplay1.textContent = e.dataTransfer.files[0].name;
+              checkBothFilesUploaded();
+            }
+          });
+
+          // Drag and drop functionality for upload box 2
+          const uploadBox2 = document.getElementById("uploadBox2");
+
+          uploadBox2.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            uploadBox2.style.borderColor = "#3498db";
+            uploadBox2.style.backgroundColor = "#1a2e4f";
+          });
+
+          uploadBox2.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            uploadBox2.style.borderColor = "";
+            uploadBox2.style.backgroundColor = "#12213a";
+          });
+
+          uploadBox2.addEventListener("drop", function (e) {
+            e.preventDefault();
+            uploadBox2.style.borderColor = "";
+            uploadBox2.style.backgroundColor = "#12213a";
+
+            if (e.dataTransfer.files.length > 0) {
+              fileInput2.files = e.dataTransfer.files;
+              fileNameDisplay2.textContent = e.dataTransfer.files[0].name;
+              checkBothFilesUploaded();
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

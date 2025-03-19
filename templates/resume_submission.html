@@ -6,323 +6,595 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ResuMatch - Upload Resumes</title>
     <style>
-        /* General Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --primary-color: #0099ff;
+            --secondary-color: #7000ff;
+            --text-color: #ffffff;
+            --dark-bg: #0a0a1a;
+            --card-bg: #111130;
+            --hover-color: #00ccff;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-secondary: #a0a0a0;
+        }
+
+        *{
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
         .container {
-            max-width: 95vw;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
+
+        /* ------------------ Header & Navigation  ------------------ */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ddd;
+            padding: 20px 0;
         }
-        nav a {
-            text-decoration: none;
-            color: #004080;
-            margin: 0 10px;
+
+        .logo {
+            color: var(--primary-color);
+            font-size: 1.5rem;
             font-weight: bold;
         }
-        section {
-            margin-top: 20px;
+
+        nav {
+        display: flex;
+        gap: 20px;
+        position: relative;
+      }
+
+      h1 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      nav a {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 5px 10px;
+        transition: color 0.3s ease-in-out, background 0.3s ease-in-out;
+        font-size: 16px;
+        position: relative;
+      }
+
+      /* ------------------ Hover effect for all links  ------------------ */
+      nav a:hover {
+        color: var(--primary-color);
+      }
+
+      /* ------------------ Underline animation effect  ------------------ */
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 0%;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease-in-out;
+      }
+
+      /* ------------------ Expand underline on hover  ------------------ */
+      nav a:hover::after {
+        width: 100%;
+      }
+
+      nav a.active-page {
+        padding: 5px 10px;
+        border-radius: 5px; 
+      }
+
+      nav a.active-page::after {
+        width: 100%;
+      }
+
+      nav a:hover ~ a.active-page::after {
+        width: 0%;
+      }
+
+        /* ------------------ Main Content  ------------------ */
+        .main-content {
+            padding: 40px 0;
         }
+
         h2 {
-            color: #333;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-color);
         }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+        }
+
+        /* ------------------ Instructions  ------------------ */
         .instructions {
-            background: #e0f0ff;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
         }
-        ul {
-            padding-left: 20px;
+
+        .instructions ul {
+            list-style-type: none;
         }
+
+        .instructions ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .instructions ul li::before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        /* ------------------ Upload Section  ------------------ */
         .upload-container {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
-        .upload-container input {
+
+        .upload-box {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--card-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            border-color: var(--hover-color);
+        }
+
+        .upload-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .upload-hint {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        input[type="file"] {
+            position: absolute;
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
         }
+
+        
+        /* ------------------ Uploaded Files  ------------------ */
         .uploaded-files {
-            margin-top: 15px;
+            margin-bottom: 30px;
         }
+
         .file-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #d4edda;
-            padding: 8px;
-            margin-bottom: 5px;
+            background-color: rgba(0, 153, 255, 0.1);
+            padding: 12px;
+            margin-bottom: 10px;
             border-radius: 5px;
+            border: 1px solid rgba(0, 153, 255, 0.3);
         }
+
         .remove-btn {
-            color: #d9534f;
-            font-weight: bold;
+            background: none;
+            border: none;
+            color: #ff6b6b;
             cursor: pointer;
+            font-weight: bold;
         }
+
+        /* ------------------ Job Description  ------------------ */
+        .job-description {
+            margin-bottom: 30px;
+        }
+
+        .job-description label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
         textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            resize: vertical;
+            min-height: 150px;
         }
-        button {
-            display: inline-block;
-            background: #004080;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #003366;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        footer a {
-            color: #004080;
-            text-decoration: none;
-            margin: 0 10px;
-        }
+
+        /* ------------------ Progress Indicator  ------------------ */
         .progress {
             display: none;
             margin: 20px 0;
-            padding: 10px;
-            background: #ffffe0;
-            border-radius: 5px;
+            padding: 15px;
+            background-color: rgba(0, 153, 255, 0.1);
+            border-radius: 10px;
             text-align: center;
+            color: var(--text-color);
+            border: 1px solid rgba(0, 153, 255, 0.3);
         }
+
+        /* ------------------ Loading Spinner  ------------------ */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 153, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ---------------- Submit Button ------------------- */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 153, 255, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 153, 255, 0.6);
+        }
+
+        /* ----------------- Alert Messages --------------------- */
+        #alertContainer {
+            margin-bottom: 20px;
+        }
+
         .alert {
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
         .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(46, 213, 115, 0.1);
+            color: #2ed573;
+            border: 1px solid rgba(46, 213, 115, 0.3);
         }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
+        .alert-danger {
+            background-color: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        /* ------------------- Footer ------------------- */
+        footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ---------------- Responsive Design ----------------------- */
+
+        @media (max-width: 768px){
             header {
                 flex-direction: column;
                 text-align: center;
             }
+            
             nav {
-                margin-top: 10px;
+                margin-top: 15px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                margin-top: 15px;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1 class="logo">ResuMatch</h1>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('resume_submission') }}" class="active-page"
+                  >Upload Resumes</a
+                >
+                <a href="{{ url_for('compare_resume') }}">Compare Resume</a>
+              </nav>
+        </header>
 
-<div class="container">
-    <!-- Navbar -->
-    <header>
-        <h1>ResuMatch</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('resume_submission') }}">Upload Resumes</a>
-        </nav>
-    </header>
+        <!-- Main Section -->
+        <section class="main-content">
+            <h2>Upload Resumes for Analysis</h2>
+            <p class="subtitle">Follow the instructions below to upload multiple resumes and a job description.</p>
 
-    <!-- Main Section -->
-    <section>
-        <h2>Upload Resumes for Analysis</h2>
-        <p>Follow the instructions below to upload multiple resumes and a job description.</p>
-
-        <!-- Instructions -->
-        <div class="instructions">
-            <h3>Instructions</h3>
-            <ul>
-                <li>Click on the 'Upload' button to select resumes from your device.</li>
-                <li>Ensure each file is in PDF format for optimal analysis.</li>
-                <li>Provide a job description in the input field below.</li>
-                <li>Click 'Submit' to analyze the resumes.</li>
-            </ul>
-        </div>
-
-        <div id="alertContainer"></div>
-
-        <form id="resumeForm" enctype="multipart/form-data" method="post" action="{{ url_for('process_uploads') }}">
-            <!-- Upload Section -->
-            <div class="upload-container">
-                <label for="resumeUpload">Upload Resumes</label>
-                <input type="file" id="resumeUpload" name="files" multiple accept=".pdf">
-                <button type="button" onclick="uploadFiles()">Upload Resumes</button>
+            <!-- Instructions -->
+            <div class="instructions">
+                <ul>
+                    <li>Click on the 'Upload' button to select resumes from your device.</li>
+                    <li>Ensure each file is in PDF format for optimal analysis.</li>
+                    <li>Provide a job description in the input field below.</li>
+                    <li>Click 'Submit' to analyze the resumes.</li>
+                </ul>
             </div>
 
-            <!-- Uploaded Files -->
-            <div class="uploaded-files" id="uploadedFiles"></div>
+            <div id="alertContainer"></div>
 
-            <!-- Job Description -->
-            <div>
-                <label for="jobDescription">Job Description</label>
-                <textarea id="jobDescription" name="jobDescription" rows="5" placeholder="Paste or type the job description here..."></textarea>
+            <form id="resumeForm" enctype="multipart/form-data" method="post" action="{{ url_for('process_uploads') }}">
+                <div class="upload-container">
+                    <div class="upload-box">
+                        <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Upload Resumes (PDF Only)</p>
+                        <p class="upload-hint">Drag and drop your files here or click to browse</p>
+                        <input type="file" id="resumeUpload" name="files" multiple accept=".pdf">
+                    </div>
+                </div>
+
+                <!-- Uploaded Files -->
+                <div class="uploaded-files" id="uploadedFiles"></div>
+
+                <!-- Job Description -->
+                <div class="job-description">
+                    <label for="jobDescription">Job Description</label>
+                    <textarea id="jobDescription" name="jobDescription" rows="5" placeholder="Paste or type the job description here..."></textarea>
+                </div>
+
+                <div id="loadingSection" class="loading hidden">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing resumes... This may take a few moments.</p>
+                </div>
+
+                <div class="progress" id="progressIndicator">
+                    <p>Processing resumes... This may take a few moments.</p>
+                </div>
+
+                <button type="button" class="submit-btn" id="submitBtn" onclick="submitAnalysis()">Submit for Analysis</button>
+            </form>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 ResuMatch. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
             </div>
+        </footer>
+    </div>
 
-            <div class="progress" id="progressIndicator">
-                <p>Processing resumes... This may take a few moments.</p>
-            </div>
+    <script>
+        const uploadedFiles = [];
 
-            <!-- Submit Button -->
-            <button type="button" onclick="submitAnalysis()">Submit for Analysis</button>
-        </form>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 ResuMatch. All rights reserved.</p>
-        <a href="#">Contact Us</a>
-        <a href="#">Privacy Policy</a>
-    </footer>
-</div>
-
-<script>
-    // Store uploaded files information
-    const uploadedFiles = [];
-
-    function showAlert(message, type) {
-        const alertContainer = document.getElementById('alertContainer');
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type}`;
-        alertDiv.textContent = message;
-        alertContainer.appendChild(alertDiv);
-        
-        // Auto-remove alert after 5 seconds
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 5000);
-    }
-
-    function uploadFiles() {
-        const input = document.getElementById('resumeUpload');
-        const fileList = document.getElementById('uploadedFiles');
-        
-        if (input.files.length === 0) {
-            showAlert("Please select PDF files to upload.", "danger");
-            return;
+        function showAlert(message, type){
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
         }
 
-        const formData = new FormData();
-        
-        for (let file of input.files) {
-            if (file.type !== "application/pdf") {
-                showAlert("Only PDF files are allowed.", "danger");
-                continue;
+        document.addEventListener('DOMContentLoaded', function(){
+            const uploadBox = document.querySelector('.upload-box');
+            const fileInput = document.getElementById('resumeUpload');
+            
+            fileInput.addEventListener('change', function(){
+                if (this.files.length > 0){
+                    uploadFiles();
+                }
+            });
+        });
+
+        function uploadFiles(){
+            const input = document.getElementById('resumeUpload');
+            const fileList = document.getElementById('uploadedFiles');
+            
+            if (input.files.length === 0){
+                showAlert("Please select PDF files to upload.", "danger");
+                return;
             }
 
-            formData.append("files[]", file);
+            const formData = new FormData();
             
-            // Store file information
-            uploadedFiles.push({
-                original_name: file.name,
-                filename: file.name, // Will be replaced with server-side filename
-                file: file
-            });
+            for (let file of input.files){
+                if (file.type !== "application/pdf"){
+                    showAlert("Only PDF files are allowed.", "danger");
+                    continue;
+                }
 
-            // Display file in UI
-            const fileDiv = document.createElement('div');
-            fileDiv.classList.add('file-item');
-            fileDiv.innerHTML = `
-                <span>${file.name}</span>
-                <button type="button" class="remove-btn" onclick="removeFile(this, '${file.name}')">Remove</button>
-            `;
-            fileList.appendChild(fileDiv);
+                formData.append("files[]", file);
+                
+                uploadedFiles.push({
+                    original_name: file.name,
+                    filename: file.name, 
+                    file: file
+                });
+
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('file-item');
+                fileDiv.innerHTML = `
+                    <span>${file.name}</span>
+                    <button type="button" class="remove-btn" onclick="removeFile(this, '${file.name}')">Remove</button>
+                `;
+                fileList.appendChild(fileDiv);
+            }
+
+            input.value = ""; 
+            
+            showAlert("Files added successfully. Click 'Submit for Analysis' when ready.", "success");
         }
 
-        input.value = "";  // Clear file input
-        
-        showAlert("Files added successfully. Click 'Submit for Analysis' when ready.", "success");
-    }
-
-    function removeFile(button, filename) {
-        // Remove from UI
-        button.parentElement.remove();
-        
-        // Remove from array
-        const index = uploadedFiles.findIndex(file => file.original_name === filename);
-        if (index !== -1) {
-            uploadedFiles.splice(index, 1);
-        }
-    }
-
-    function submitAnalysis() {
-        const jobDescription = document.getElementById('jobDescription').value.trim();
-        
-        if (uploadedFiles.length === 0) {
-            showAlert("Please upload at least one resume.", "danger");
-            return;
+        function removeFile(button, filename){
+            // Remove from UI
+            button.parentElement.remove();
+            
+            // Remove from array
+            const index = uploadedFiles.findIndex(file => file.original_name === filename);
+            if (index !== -1){
+                uploadedFiles.splice(index, 1);
+            }
         }
 
-        if (jobDescription === "") {
-            showAlert("Please provide a job description.", "danger");
-            return;
-        }
-        
-        // Show progress indicator
-        document.getElementById('progressIndicator').style.display = 'block';
-        
-        // Debug information
-        console.log("Submitting form with:", uploadedFiles.length, "files");
-        
-        // Create FormData object
-        const formData = new FormData(document.getElementById('resumeForm'));
-        
-        // Clear any existing files to avoid duplicates
-        if (formData.has('files')) {
-            formData.delete('files');
-        }
-        
-        // Add all files with the correct field name that matches your Flask code
-        for (let fileInfo of uploadedFiles) {
-            console.log("Adding file to form:", fileInfo.original_name);
-            formData.append('files', fileInfo.file);
-        }
-        
-        // Submit the form properly
-        const form = document.getElementById('resumeForm');
-        
-        // Instead of using the built-in submit, we'll submit with the FormData
-        // This ensures all files are included
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', form.action, true);
-        xhr.onload = function() {
-            document.getElementById('progressIndicator').style.display = 'none';
-            document.open();
-            document.write(xhr.responseText);
-            document.close();
-        };
-        xhr.send(formData);
-    }
-</script>
+        function submitAnalysis(){
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+            
+            if (uploadedFiles.length === 0){
+                showAlert("Please upload at least one resume.", "danger");
+                return;
+            }
 
+            if (jobDescription === ""){
+                showAlert("Please provide a job description.", "danger");
+                return;
+            }
+            
+            // Show spinner and disable submit button
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').style.opacity = '0.7';
+            
+            // Also show progress indicator (for backward compatibility)
+            document.getElementById('progressIndicator').style.display = 'block';
+            
+            // Debug information
+            console.log("Submitting form with:", uploadedFiles.length, "files");
+            
+            // Create FormData object
+            const formData = new FormData(document.getElementById('resumeForm'));
+            
+            // Clear any existing files to avoid duplicates
+            if (formData.has('files')){
+                formData.delete('files');
+            }
+            
+            // Add all files with the correct field name that matches your Flask code
+            for (let fileInfo of uploadedFiles){
+                console.log("Adding file to form:", fileInfo.original_name);
+                formData.append('files', fileInfo.file);
+            }
+            
+            // Submit the form properly
+            const form = document.getElementById('resumeForm');
+            
+            // Instead of using the built-in submit, we'll submit with the FormData
+            // This ensures all files are included
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', form.action, true);
+            xhr.onload = function(){
+                // Hide spinner when done
+                document.getElementById('loadingSection').classList.add('hidden');
+                document.getElementById('progressIndicator').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').style.opacity = '1';
+                
+                document.open();
+                document.write(xhr.responseText);
+                document.close();
+            };
+            xhr.send(formData);
+        }
+    </script>
 </body>
 </html>

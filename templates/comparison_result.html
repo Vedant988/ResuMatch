@@ -1,0 +1,534 @@
+<!-- comparison_result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuMatch - Comparison Results</title>
+    <link rel="stylesheet" href="../static/comparison_result_css.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>ResuMatch</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('resume_submission') }}">Upload Resumes</a>
+            <a href="{{ url_for('compare_resume') }}">Compare Resume</a>
+            <a href="#">Premium</a>
+            <a href="#">About</a>
+        </nav>
+    </header>
+
+    <h1 class="page-title">Compare Resume Results</h1>
+    
+    <div class="battle-summary">
+        <div class="winner-announcement">
+            <div class="trophy-icon">🏆</div>
+            <h2>Winner: {{ result.winner }}</h2>
+            <p>{{ result.verdict | truncate(150) }}...</p>
+        </div>
+        
+        <div class="score-overview">
+            <div class="score-wrapper">
+                <div class="candidate-score">
+                    <div class="score-label">Candidate 1</div>
+                    <div class="score-value">{{ result.overall_score.candidate1 }}%</div>
+                </div>
+                
+                <div style="flex: 3">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ result.overall_score.candidate1 }}%; background-color: #3498db;"></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ result.overall_score.candidate2 }}%; background-color: #e74c3c;"></div>
+                    </div>
+                </div>
+                
+                <div class="candidate-score">
+                    <div class="score-label">Candidate 2</div>
+                    <div class="score-value">{{ result.overall_score.candidate2 }}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="detailed-comparison">
+        <div class="verdict-section">
+            <div class="verdict-title"><i>🏆</i> Overall Comparison</div>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Category</th>
+                    <th>Analysis</th>
+                </tr>
+                <tr>
+                    <td>Experience</td>
+                    <td>{{ result.experience_comparison }}</td>
+                </tr>
+                <tr>
+                    <td>Education</td>
+                    <td>{{ result.education_comparison }}</td>
+                </tr>
+            </table>
+            
+            <div class="comparison-container">
+                <div class="candidate-profile">
+                    <div class="section-title">Candidate 1: Strengths</div>
+                    <ul>
+                        {% for strength in result.candidate1_strengths %}
+                        <li>{{ strength }}</li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="section-title">Candidate 1: Weaknesses</div>
+                    <ul>
+                        {% for weakness in result.candidate1_weaknesses %}
+                        <li>{{ weakness }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="candidate-profile">
+                    <div class="section-title">Candidate 2: Strengths</div>
+                    <ul>
+                        {% for strength in result.candidate2_strengths %}
+                        <li>{{ strength }}</li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="section-title">Candidate 2: Weaknesses</div>
+                    <ul>
+                        {% for weakness in result.candidate2_weaknesses %}
+                        <li>{{ weakness }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="verdict-content">
+                <h3>Final Verdict</h3>
+                <p>{{ result.verdict }}</p>
+            </div>
+        </div>
+        <div class="category-comparison">
+            <h2>Category Comparison</h2>
+            <div class="radar-chart-container">
+                <div class="chart-box">
+                    <div id="radarChart"></div>
+                </div>
+            </div>
+            
+            <div class="category-scores">
+                <div class="category-item">
+                    <div class="category-label">Experience</div>
+                    <div class="comparison-bars">
+                        <div class="candidate-bar">
+                            <div class="bar-label">Candidate 1</div>
+                            <div class="progress-bar">
+                                <div id="exp1" class="progress-fill" style="width: 0%; background-color: #3498db;"></div>
+                            </div>
+                        </div>
+                        <div class="candidate-bar">
+                            <div class="bar-label">Candidate 2</div>
+                            <div class="progress-bar">
+                                <div id="exp2" class="progress-fill" style="width: 0%; background-color: #e74c3c;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-label">Education</div>
+                    <div class="comparison-bars">
+                        <div class="candidate-bar">
+                            <div class="bar-label">Candidate 1</div>
+                            <div class="progress-bar">
+                                <div id="edu1" class="progress-fill" style="width: 0%; background-color: #3498db;"></div>
+                            </div>
+                        </div>
+                        <div class="candidate-bar">
+                            <div class="bar-label">Candidate 2</div>
+                            <div class="progress-bar">
+                                <div id="edu2" class="progress-fill" style="width: 0%; background-color: #e74c3c;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+
+    <div class="candidates-comparison">
+        <div class="comparison-container">
+            <div class="candidate-profile">
+                {% if result.winner == "Candidate 1" %}
+                <div class="crown-icon">👑</div>
+                {% endif %}
+                <div class="profile-header">
+                    <div class="profile-pic">1</div>
+                    <div class="profile-info">
+                        <div class="profile-name">{{ candidate1.name }}</div>
+                        <div class="profile-title">
+                            {% if candidate1.work_experience and candidate1.work_experience|length > 0 %}
+                                {{ candidate1.work_experience[0].role }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>💼</i> Experience</div>
+                    {% for job in candidate1.work_experience %}
+                    <div class="experience-item">
+                        <div class="item-title">{{ job.role }}</div>
+                        <div class="item-subtitle">{{ job.company }} | {{ job.duration }}</div>
+                        <div class="item-description">{{ job.description }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>🎓</i> Education</div>
+                    {% for edu in candidate1.education %}
+                    <div class="education-item">
+                        <div class="item-title">{{ edu.degree }}</div>
+                        <div class="item-subtitle">{{ edu.institution }} | {{ edu.graduation_date }}</div>
+                        <div class="item-description">{{ edu.field }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>🏆</i> Certifications</div>
+                    {% for cert in candidate1.certifications %}
+                    <div class="certification-item">
+                        <div class="item-title">{{ cert.name }}</div>
+                        <div class="item-subtitle">{{ cert.issuer }} | {{ cert.date }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="candidate-profile">
+                {% if result.winner == "Candidate 2" %}
+                <div class="crown-icon">👑</div>
+                {% endif %}
+                <div class="profile-header">
+                    <div class="profile-pic">2</div>
+                    <div class="profile-info">
+                        <div class="profile-name">{{ candidate2.name }}</div>
+                        <div class="profile-title">
+                            {% if candidate2.work_experience and candidate2.work_experience|length > 0 %}
+                                {{ candidate2.work_experience[0].role }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>💼</i> Experience</div>
+                    {% for job in candidate2.work_experience %}
+                    <div class="experience-item">
+                        <div class="item-title">{{ job.role }}</div>
+                        <div class="item-subtitle">{{ job.company }} | {{ job.duration }}</div>
+                        <div class="item-description">{{ job.description }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>🎓</i> Education</div>
+                    {% for edu in candidate2.education %}
+                    <div class="education-item">
+                        <div class="item-title">{{ edu.degree }}</div>
+                        <div class="item-subtitle">{{ edu.institution }} | {{ edu.graduation_date }}</div>
+                        <div class="item-description">{{ edu.field }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="section">
+                    <div class="section-title"><i>🏆</i> Certifications</div>
+                    {% for cert in candidate2.certifications %}
+                    <div class="certification-item">
+                        <div class="item-title">{{ cert.name }}</div>
+                        <div class="item-subtitle">{{ cert.issuer }} | {{ cert.date }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="button-group">
+        <a href="{{ url_for('compare_resume') }}" class="btn">Compare New Resumes</a>
+        <a href="#" class="btn btn-primary" id="downloadPDF">Download Report</a>
+        <a href="{{ url_for('index') }}" class="btn btn-outline">Back to Home</a>
+    </div>
+</div>
+
+<script>
+    const resultData={{ result|tojson }};
+    const candidate1Data={{ candidate1|tojson }};
+    const candidate2Data={{ candidate2|tojson }};
+    
+    const categoryScores={
+        experience: {
+            candidate1: resultData.experience_score ? resultData.experience_score.candidate1 : Math.max(60, resultData.overall_score.candidate1 - 5),
+            candidate2: resultData.experience_score ? resultData.experience_score.candidate2 : Math.max(55, resultData.overall_score.candidate2 - 8)
+        },
+        education: {
+            candidate1: resultData.education_score ? resultData.education_score.candidate1 : Math.min(95, resultData.overall_score.candidate1+8),
+            candidate2: resultData.education_score ? resultData.education_score.candidate2 : Math.min(80, resultData.overall_score.candidate2 - 3)
+        },
+        projects: { 
+            candidate1: Math.min(90, resultData.overall_score.candidate1+3),
+            candidate2: Math.min(85, resultData.overall_score.candidate2+5)
+        },
+        communication: { 
+            candidate1: Math.min(88, resultData.overall_score.candidate1+2),
+            candidate2: Math.min(75, resultData.overall_score.candidate2 - 5)
+        }
+    };
+    
+    document.getElementById('exp1').style.width=categoryScores.experience.candidate1+'%';
+    document.getElementById('exp2').style.width=categoryScores.experience.candidate2+'%';
+    document.getElementById('edu1').style.width=categoryScores.education.candidate1+'%';
+    document.getElementById('edu2').style.width=categoryScores.education.candidate2+'%';
+    
+    const ctx=document.createElement('canvas');
+    ctx.id='categoryRadarChart';
+    document.getElementById('radarChart').appendChild(ctx);
+    
+    const certCount1=candidate1Data.certifications?candidate1Data.certifications.length : 0;
+    const certCount2=candidate2Data.certifications?candidate2Data.certifications.length : 0;
+    
+    const maxCerts=Math.max(certCount1, certCount2) || 1; 
+    const certScore1=Math.min(100,(certCount1/maxCerts)*100);
+    const certScore2=Math.min(100,(certCount2/maxCerts)*100);
+
+    const canvas=document.createElement('canvas');
+canvas.id='categoryRadarChart';
+
+document.getElementById('radarChart').appendChild(canvas);
+
+canvas.style.width ='80vh';
+canvas.style.height='80vh';
+
+canvas.width=canvas.offsetWidth;
+canvas.height=canvas.offsetHeight;
+    
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: [
+                'Academic Performance', 
+                'Work Experience', 
+                'Project Experience', 
+                'Communication Skills', 
+                'Certifications'
+            ],
+            datasets: [
+                {
+                    label: 'Candidate 1',
+                    data: [
+                        categoryScores.education.candidate1,
+                        categoryScores.experience.candidate1,
+                        categoryScores.projects.candidate1,
+                        categoryScores.communication.candidate1,
+                        certScore1
+                    ],
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    pointBackgroundColor: 'rgba(52, 152, 219, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(52, 152, 219, 1)'
+                },
+                {
+                    label: 'Candidate 2',
+                    data: [
+                        categoryScores.education.candidate2,
+                        categoryScores.experience.candidate2,
+                        categoryScores.projects.candidate2,
+                        categoryScores.communication.candidate2,
+                        certScore2
+                    ],
+                    backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                    borderColor: 'rgba(231, 76, 60, 1)',
+                    pointBackgroundColor: 'rgba(231, 76, 60, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(231, 76, 60, 1)'
+                }
+            ]
+        },
+        options: {
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)',
+                        circular: true
+                    },
+                    pointLabels: {
+                        color: 'white',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        color: 'white',
+                        backdropColor: 'transparent',
+                        stepSize: 20,
+                        max: 100
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white',
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            },
+            elements: {
+                line: {
+                    borderWidth: 3
+                }
+            }
+        }
+    });
+    
+    function createExperienceTimeline(){
+        const timelineContainer=document.getElementById('experienceTimeline');
+        const experience1=candidate1Data.work_experience || [];
+        const experience2=candidate2Data.work_experience || [];
+        
+        if(experience1.length===0 && experience2.length===0) {
+            const noDataMsg=document.createElement('p');
+            noDataMsg.textContent='No experience data available for timeline visualization.';
+            timelineContainer.appendChild(noDataMsg);
+            return;
+        }
+        
+        const timeline=document.createElement('div');
+        timeline.className='timeline';
+        
+        const timelineHeader=document.createElement('div');
+        timelineHeader.className='timeline-header';
+        
+        const candidate1Label=document.createElement('div');
+        candidate1Label.className='timeline-label candidate1-label';
+        candidate1Label.textContent='Candidate 1';
+        timelineHeader.appendChild(candidate1Label);
+        
+        const timelineCenter=document.createElement('div');
+        timelineCenter.className='timeline-center';
+        timelineHeader.appendChild(timelineCenter);
+        
+        const candidate2Label=document.createElement('div');
+        candidate2Label.className='timeline-label candidate2-label';
+        candidate2Label.textContent='Candidate 2';
+        timelineHeader.appendChild(candidate2Label);
+        
+        timeline.appendChild(timelineHeader);
+        
+        function getYearFromDuration(duration) {
+            if (!duration) return null;
+            
+            const yearRangeMatch=duration.match(/(\d{4})\s*-\s*(\d{4}|\w+)/);
+            if (yearRangeMatch) {
+                return {
+                    start: parseInt(yearRangeMatch[1]),
+                    end: yearRangeMatch[2].toLowerCase() === "present" ? new Date().getFullYear() : parseInt(yearRangeMatch[2])
+                };
+            }
+            
+            const singleYearMatch=duration.match(/(\d{4})/);
+            if (singleYearMatch) {
+                return {
+                    start: parseInt(singleYearMatch[1]),
+                    end: parseInt(singleYearMatch[1])
+                };
+            }
+            
+            return null;
+        }
+        
+        experience1.forEach(job => {
+            const timelineItem=document.createElement('div');
+            timelineItem.className='timeline-item candidate1-item';
+            
+            const jobContent=document.createElement('div');
+            jobContent.className='timeline-content';
+            
+            if (typeof job === 'string') {
+                jobContent.innerHTML=`<p>${job}</p>`;
+            } else {
+                const years=getYearFromDuration(job.duration);
+                const duration=years ? `(${years.start} - ${years.end})` : job.duration;
+                
+                jobContent.innerHTML=`
+                    <h3>${job.role || 'Role not specified'}</h3>
+                    <p>${job.company || 'Company not specified'} | ${duration}</p>
+                `;
+            }
+            
+            timelineItem.appendChild(jobContent);
+            timeline.appendChild(timelineItem);
+        });
+        
+        experience2.forEach(job => {
+            const timelineItem=document.createElement('div');
+            timelineItem.className='timeline-item candidate2-item';
+            
+            const jobContent=document.createElement('div');
+            jobContent.className='timeline-content';
+            
+            if (typeof job === 'string') {
+                jobContent.innerHTML=`<p>${job}</p>`;
+            } else {
+                const years=getYearFromDuration(job.duration);
+                const duration=years ? `(${years.start} - ${years.end})` : job.duration;
+                
+                jobContent.innerHTML=`
+                    <h3>${job.role || 'Role not specified'}</h3>
+                    <p>${job.company || 'Company not specified'} | ${duration}</p>
+                `;
+            }
+            
+            timelineItem.appendChild(jobContent);
+            timeline.appendChild(timelineItem);
+        });
+        
+        timelineContainer.appendChild(timeline);
+    }
+    
+    createExperienceTimeline();
+    
+    document.getElementById('downloadPDF').addEventListener('click', function(e){
+        e.preventDefault();
+        alert('Report download functionality would be implemented here.');
+    });
+</script>
+
+</body>
+</html>

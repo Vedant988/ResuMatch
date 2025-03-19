@@ -5,182 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ResuMatch - Results</title>
-    <style>
-        /* General Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 95vw;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ddd;
-        }
-        nav a {
-            text-decoration: none;
-            color: #004080;
-            margin: 0 10px;
-            font-weight: bold;
-        }
-        section {
-            margin-top: 20px;
-        }
-        h2 {
-            color: #333;
-        }
-        .summary {
-            background: #e0f0ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .resume-card {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            break-inside: avoid;
-        }
-        .resume-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .score-high {
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
-        }
-        .score-medium {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-        }
-        .score-low {
-            background-color: #f8d7da;
-            border-left: 5px solid #dc3545;
-        }
-        .resume-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-        .resume-name {
-            font-size: 1.4em;
-            font-weight: bold;
-        }
-        .resume-score {
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-            background: #f0f0f0;
-        }
-        .resume-section {
-            margin-top: 10px;
-        }
-        .resume-section h4 {
-            color: #004080;
-            margin-bottom: 5px;
-        }
-        .resume-section ul {
-            margin-top: 5px;
-        }
-        .skill-tag {
-            display: inline-block;
-            background: #e9ecef;
-            padding: 3px 8px;
-            margin: 2px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-        .btn {
-            display: inline-block;
-            background: #004080;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1em;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background: #003366;
-        }
-        .no-results {
-            text-align: center;
-            padding: 30px;
-            background: #f8d7da;
-            border-radius: 5px;
-            color: #721c24;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        footer a {
-            color: #004080;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        
-        /* Columns for larger screens */
-        .results-container {
-            column-count: 1;
-        }
-        
-        @media (min-width: 768px) {
-            .results-container {
-                column-count: 2;
-                column-gap: 20px;
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .results-container {
-                column-count: 3;
-                column-gap: 20px;
-            }
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-            nav {
-                margin-top: 10px;
-            }
-            .resume-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .resume-score {
-                margin-top: 10px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../static/result_css.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
 <div class="container">
-    <!-- Navbar -->
     <header>
         <h1>ResuMatch</h1>
         <nav>
@@ -189,97 +19,317 @@
         </nav>
     </header>
 
-    <!-- Results Section -->
-    <section>
-        <h2>Resume Ranking Results</h2>
-        
-        <div class="summary">
-            <h3>Results Summary</h3>
-            <p>We analyzed {{ results|length }} resumes against your job description. Here are the candidates ranked by match score.</p>
+    <div class="results-header">
+        <div>
+            <h2>Matching Results</h2>
+            <p class="results-count">Found {{ results|length }} matching candidates</p>
         </div>
-        
-        {% if results %}
-            <div class="results-container">
-                {% for resume in results %}
-                    {% set score_class = 'score-high' if resume.score > 0.7 else ('score-medium' if resume.score > 0.5 else 'score-low') %}
-                    <div class="resume-card {{ score_class }}">
-                        <div class="resume-header">
-                            <div class="resume-name">
-                                {{ resume.resume_data.name }}
-                            </div>
-                            <div class="resume-score">
-                                {% set percentage = (resume.score * 100)|int %}
-                                {{ percentage }}% Match
-                            </div>
-                        </div>
-                        
-                        <div class="resume-section">
-                            <h4>Contact</h4>
-                            <p>{{ resume.resume_data.contact }}</p>
-                        </div>
-                        
-                        <div class="resume-section">
-                            <h4>Skills</h4>
-                            <div>
-                                {% for skill in resume.resume_data.skills %}
-                                    <span class="skill-tag">{{ skill }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                        <div class="resume-section">
-                            <h4>Work Experience</h4>
-                            <ul>
-                                {% for exp in resume.resume_data.work_experience %}
-                                    <li>{{ exp }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        
-                        <div class="resume-section">
-                            <h4>Education</h4>
-                            <ul>
-                                {% for edu in resume.resume_data.education %}
-                                    <li>{{ edu }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        
-                        {% if resume.resume_data.certifications %}
-                            <div class="resume-section">
-                                <h4>Certifications</h4>
-                                <ul>
-                                    {% for cert in resume.resume_data.certifications %}
-                                        <li>{{ cert }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {% endif %}
-                        
-                        <div class="resume-section">
-                            <small>File: {{ resume.filename }}</small>
-                        </div>
-                    </div>
-                {% endfor %}
+        <div class="sort-options">
+            <span>Sort by:</span>
+            <select id="sort-select">
+                <option value="score">Match Score</option>
+                <!-- <option value="name">Name</option> -->
+                <option value="experience">Experience</option>
+            </select>
+            <div class="view-toggle">
+                <button class="grid-view active"><i class="fa fa-th-large"></i></button>
+                <button class="list-view"><i class="fa fa-list"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Candidates List -->
+    <div class="candidates-list">
+        {% for result in results %}
+        <div class="candidate-card" onclick="openModal('modal-{{ loop.index }}')">
+            <div class="rank">Rank <span class="rank-no">{{ loop.index }}</span></div>
+            <div class="match-score">{{ "%.0f"|format(result.score * 100) }}%</div>
+            <div class="candidate-info">
+                <div class="candidate-name">{{ result.resume_data.name }}</div>
+                {% if result.resume_data.work_experience and result.resume_data.work_experience|length > 0 %}
+                <div class="candidate-position">{{ result.resume_data.work_experience[0].role }}</div>
+                {% else %}
+                <div class="candidate-position">Candidate</div>
+                {% endif %}
+                <div class="candidate-meta">
+                    {% if result.resume_data.work_experience and result.resume_data.work_experience|length > 0 and result.resume_data.work_experience[0].duration %}
+                    <span><i class="fa fa-briefcase"></i> {{ result.resume_data.work_experience|length }} years</span>
+                    {% endif %}
+                    {% if result.resume_data.contact and result.resume_data.contact.location %}
+                    <span><i class="fa fa-map-marker"></i> {{ result.resume_data.contact.location }}</span>
+                    {% endif %}
+                </div>
+                <div class="candidate-skills">
+                    {% if result.resume_data.skills %}
+                    {% for skill in result.resume_data.skills[:4] %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             
-            <a href="{{ url_for('resume_submission') }}" class="btn">Upload More Resumes</a>
-        {% else %}
-            <div class="no-results">
-                <h3>No Results Found</h3>
-                <p>There were no results found or an error occurred during processing.</p>
-                <a href="{{ url_for('resume_submission') }}" class="btn">Try Again</a>
+            <div class="view-profile-both-btn">
+                <button class="why-btn" onclick="event.stopPropagation(); whyModal('why-{{ loop.index }}')">Why Rank {{loop.index }}?</button>
+                <button class="view-profile-btn" onclick="event.stopPropagation(); openModal('modal-{{ loop.index }}')">View Profile</button>
             </div>
-        {% endif %}
-    </section>
+            <!-- <button class="view-profile-btn" onclick="event.stopPropagation(); openModal('modal-{{ loop.index }}')">View Profile</button> -->
+        </div>
+        {% endfor %}
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 ResuMatch. All rights reserved.</p>
-        <a href="#">Contact Us</a>
-        <a href="#">Privacy Policy</a>
-    </footer>
+    {% for result in results %}
+    <div id="modal-{{ loop.index }}" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('modal-{{ loop.index }}')">&times;</button>
+            
+            <div class="modal-header">
+                <div class="modal-candidate-header">
+                    <h2># {{ loop.index }}</h2>
+                    <div>
+                        <h2>{{ result.resume_data.name }}</h2>
+                        <div class="modal-score" style="width: {{ result.score * 100 }}%;"></div>
+                        <p>{{ "%.0f"|format(result.score * 100) }}% Match</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-candidate-meta">
+                <div class="modal-left-column">
+                    <div class="modal-section">
+                        <h3>Contact Information</h3>
+                        {% if result.resume_data.contact %}
+                            {% if result.resume_data.contact.email %}
+                            <p><i class="fa fa-envelope"></i> {{ result.resume_data.contact.email }}</p>
+                            {% endif %}
+                            {% if result.resume_data.contact.phone %}
+                            <p><i class="fa fa-phone"></i> {{ result.resume_data.contact.phone }}</p>
+                            {% endif %}
+                            {% if result.resume_data.contact.linkedin %}
+                            <p><i class="fa fa-linkedin"></i> {{ result.resume_data.contact.linkedin }}</p>
+                            {% endif %}
+                            {% if result.resume_data.contact.location %}
+                            <p><i class="fa fa-map-marker"></i> {{ result.resume_data.contact.location }}</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3>Skills</h3>
+                        <div class="modal-skills">
+                            {% if result.resume_data.skills %}
+                            {% for skill in result.resume_data.skills %}
+                            <span class="skill-tag">{{ skill }}</span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3>Education</h3>
+                        {% if result.resume_data.education %}
+                        {% for edu in result.resume_data.education %}
+                        <div class="modal-education-item">
+                            <div class="modal-education-title">{{ edu.degree }} {{ edu.field }}</div>
+                            <div class="modal-education-institution">{{ edu.institution }}</div>
+                            <div class="modal-education-period">{{ edu.graduation_date }}</div>
+                            {% if edu.cgpa %}
+                            <div>CGPA: {{ edu.cgpa }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3>Certifications</h3>
+                        {% if result.resume_data.certifications %}
+                        <ul>
+                            {% for cert in result.resume_data.certifications %}
+                            <li>{{ cert.name }} - {{ cert.issuer }} ({{ cert.date }})</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>No certifications listed</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="modal-right-column">
+                    <div class="modal-section">
+                        <h3>Work Experience</h3>
+                        {% if result.resume_data.work_experience %}
+                        {% for exp in result.resume_data.work_experience %}
+                        <div class="modal-experience-item">
+                            <div class="modal-experience-title">{{ exp.role }}</div>
+                            <div class="modal-experience-company">{{ exp.company }}</div>
+                            <div class="modal-experience-period">{{ exp.duration }}</div>
+                            <div class="modal-experience-description">{{ exp.description }}</div>
+                            {% if exp.technologies %}
+                            <div class="candidate-skills" style="margin-top: 8px;">
+                                {% for tech in exp.technologies %}
+                                <span class="skill-tag">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    {% if result.resume_data.projects %}
+                    <div class="modal-section">
+                        <h3>Projects</h3>
+                        {% for project in result.resume_data.projects %}
+                        <div class="modal-experience-item">
+                            <div class="modal-experience-title">{{ project.name }}</div>
+                            <div class="modal-experience-description">{{ project.description }}</div>
+                            {% if project.technologies %}
+                            <div class="candidate-skills" style="margin-top: 8px;">
+                                {% for tech in project.technologies %}
+                                <span class="skill-tag">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="view-full-resume-btn">View Full Resume</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+
+{% for result in results %}
+<div id="why-{{ loop.index }}" class="modal">
+    <div class="modal-content why-modal-content">
+        <button class="close-modal" onclick="closeModal('why-{{ loop.index }}')">&times;</button>
+        
+        <div class="modal-header">
+            <h2>Why Rank {{ loop.index }}?</h2>
+        </div>
+        
+        <div class="modal-body">
+            <h3>Match Analysis for {{ result.resume_data.name }}</h3>
+            
+            {% if result.match_reasons %}
+                <h4>Matching Strengths:</h4>
+                <ul class="match-reasons">
+                    {% for reason in result.match_reasons %}
+                    <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            {% if result.skill_matches %}
+                <h4>Skill Matches:</h4>
+                <div class="skill-matches">
+                    {% for skill in result.skill_matches %}
+                    <span class="matched-skill">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if result.experience_match %}
+                <h4>Experience Relevance:</h4>
+                <div class="experience-match">
+                    <div class="match-score-bar">
+                        <div class="match-score-fill" style="width: {{ result.experience_match }}%;"></div>
+                    </div>
+                    <span>{{ result.experience_match }}% relevant experience</span>
+                </div>
+            {% endif %}
+            
+            {% if result.education_match %}
+                <h4>Education Relevance:</h4>
+                <div class="education-match">
+                    <div class="match-score-bar">
+                        <div class="match-score-fill" style="width: {{ result.education_match }}%;"></div>
+                    </div>
+                    <span>{{ result.education_match }}% education match</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    function openModal(modalId){
+        document.getElementById(modalId).style.display = 'block';
+        document.body.style.overflow = 'hidden'; 
+    }
+    function whyModal(modalId){
+        document.getElementById(modalId).style.display = 'block';
+        document.body.style.overflow = 'hidden'; 
+    }
+    
+    function closeModal(modalId){
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto'; 
+    }
+    
+    window.onclick = function(event){
+        const modals=document.getElementsByClassName('modal');
+        for (let i=0;i<modals.length;i++){
+            if (event.target===modals[i]) {
+                modals[i].style.display='none';
+                document.body.style.overflow='auto';
+            }
+        }
+    };
+    
+    document.getElementById('sort-select').addEventListener('change',function(){
+        const sortBy=this.value;
+        const candidatesList=document.querySelector('.candidates-list');
+        const candidates=Array.from(candidatesList.getElementsByClassName('candidate-card'));
+        
+        candidates.sort(function(a, b){
+            if (sortBy === 'score'){
+                const scoreA=parseFloat(a.querySelector('.match-score').textContent);
+                const scoreB=parseFloat(b.querySelector('.match-score').textContent);
+                return scoreB-scoreA;
+            } 
+            else if (sortBy === 'name'){
+                const nameA=a.querySelector('.candidate-name').textContent;
+                const nameB=b.querySelector('.candidate-name').textContent;
+                return nameA.localeCompare(nameB);
+            } 
+            else if (sortBy === 'experience'){
+                const expA=a.querySelector('.candidate-meta span:first-child') ? 
+                    parseInt(a.querySelector('.candidate-meta span:first-child').textContent) : 0;
+                const expB=b.querySelector('.candidate-meta span:first-child') ?
+                    parseInt(b.querySelector('.candidate-meta span:first-child').textContent) : 0;
+                return expB-expA;
+            }
+        });
+        
+        candidates.forEach(function(candidate) {
+            candidatesList.appendChild(candidate);
+        });
+        
+        candidates.forEach(function(candidate, index){
+            candidate.querySelector('.rank').textContent = `Rank ${index + 1}`;
+        });
+    });
+    
+    document.querySelector('.grid-view').addEventListener('click',function(){
+        document.querySelector('.grid-view').classList.add('active');
+        document.querySelector('.list-view').classList.remove('active');
+        document.querySelector('.container').classList.add('grid-view-active');
+    });
+
+    document.querySelector('.list-view').addEventListener('click',function(){
+        document.querySelector('.list-view').classList.add('active');
+        document.querySelector('.grid-view').classList.remove('active');
+        document.querySelector('.container').classList.remove('grid-view-active');
+    });
+</script>
 
 </body>
 </html>

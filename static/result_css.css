@@ -1,0 +1,527 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0c0e1a;
+    margin: 0;
+    padding: 0;
+    color: #e0e0e0;
+}
+
+.container {
+    max-width: 95vw;
+    margin: 20px auto;
+    padding: 20px;
+    background: #131629;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #252a41;
+}
+
+header h1 {
+    color: #1e90ff;
+    margin: 0;
+}
+
+nav a {
+    text-decoration: none;
+    color: #1e90ff;
+    margin: 0 10px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #3ba3ff;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.results-header h2 {
+    margin: 0;
+    color: #e0e0e0;
+}
+
+.results-count {
+    font-size: 16px;
+    color: #a0a0a0;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    color: #a0a0a0;
+}
+
+.sort-options select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #2a3050;
+    margin-left: 10px;
+    background-color: #1a1f36;
+    color: #e0e0e0;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 5px;
+    margin-left: 15px;
+}
+
+.view-toggle button {
+    background: #1a1f36;
+    border: 1px solid #2a3050;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #a0a0a0;
+}
+
+.view-toggle button.active {
+    background: #2a3050;
+    color: #e0e0e0;
+}
+
+/* Candidate Cards */
+.candidates-list {
+    margin-top: 20px;
+}
+
+.candidate-card {
+    background: #1c2139;
+    border: 1px solid #2a3050;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 20px;
+    display: flex;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: #222744;
+}
+
+.rank {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 20px;
+    color: #e0e0e0;
+}
+
+.match-score {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #1e3a6a;
+    color: #3ba3ff;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.candidate-info {
+    flex-grow: 1;
+}
+
+.candidate-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.candidate-position {
+    font-size: 16px;
+    color: #a0a0a0;
+    margin-bottom: 10px;
+}
+
+.candidate-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    color: #8a8a8a;
+    font-size: 14px;
+}
+
+.candidate-meta i {
+    margin-right: 5px;
+    color: #3ba3ff;
+}
+
+.candidate-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.skill-tag {
+    background: #1e3a6a;
+    color: #3ba3ff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.candidate-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #2a3050;
+    overflow: hidden;
+    margin-left: 20px;
+}
+
+.candidate-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.view-profile-both-btn{
+    align-self: flex-end;
+    display: flex;
+    gap: 1.5vw;
+}
+.view-profile-btn {
+    background: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: auto;
+    align-self: flex-end;
+    transition: background-color 0.3s;
+}
+.why-btn{
+    background: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: auto;
+    align-self: flex-end;
+    transition: background-color 0.3s;
+}
+
+.view-profile-btn:hover {
+    background: #3ba3ff;
+}
+
+/* ----------------  Modal  ------------------- */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: #131629;
+    margin: 50px auto;
+    width: 80%;
+    max-width: 900px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding: 20px;
+    border: 1px solid #2a3050;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #a0a0a0;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+.close-modal:hover {
+    color: #ffffff;
+}
+
+.modal-header {
+    border-bottom: 1px solid #2a3050;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-candidate-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.modal-candidate-header h2 {
+    color: #ffffff;
+    margin: 0 0 5px 0;
+}
+
+.modal-score {
+    background: #1e90ff;
+    height: 6px;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+
+.modal-candidate-header p {
+    color: #a0a0a0;
+    margin: 5px 0 0 0;
+}
+
+.modal-candidate-meta {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.modal-section {
+    margin-bottom: 20px;
+}
+
+.modal-section h3 {
+    color: #3ba3ff;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-bottom: 1px solid #2a3050;
+    padding-bottom: 5px;
+}
+
+.modal-section p {
+    margin: 5px 0;
+    color: #e0e0e0;
+}
+
+.modal-section p i {
+    color: #3ba3ff;
+    width: 20px;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.modal-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-experience-item, .modal-education-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #252a41;
+}
+
+.modal-experience-item:last-child, .modal-education-item:last-child {
+    border-bottom: none;
+}
+
+.modal-experience-title, .modal-education-title {
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #ffffff;
+}
+
+.modal-experience-company, .modal-education-institution {
+    color: #a0a0a0;
+    margin-bottom: 3px;
+}
+
+.modal-experience-period, .modal-education-period {
+    color: #8a8a8a;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.modal-experience-description {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.modal-section ul {
+    padding-left: 20px;
+    color: #e0e0e0;
+}
+
+.modal-section li {
+    margin-bottom: 5px;
+}
+
+.modal-footer {
+    border-top: 1px solid #2a3050;
+    padding-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.view-full-resume-btn {
+    background: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.view-full-resume-btn:hover {
+    background: #3ba3ff;
+}
+.rank-no{
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+/* --------------  GRID  ----------------- */
+
+.grid-view-active .candidates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.grid-view-active .candidate-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.grid-view-active .candidate-photo {
+    margin: 0 0 15px 0;
+    width: 80px;
+    height: 80px;
+}
+
+.grid-view-active .candidate-info {
+    width: 100%;
+}
+
+.grid-view-active .candidate-meta {
+    justify-content: center;
+}
+
+/* --------------------  why  --------------------- */
+
+.why-modal-content {
+    max-width: 600px;
+}
+
+.why-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.why-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.match-reasons {
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+.match-reasons li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #444;
+}
+
+.skill-matches {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.matched-skill {
+    display: inline-block;
+    background-color: #e1f5fe;
+    color: #0288d1;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin: 5px;
+    font-size: 0.9em;
+}
+
+.match-score-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.match-score-fill {
+    height: 100%;
+    background-color: #4caf50;
+    border-radius: 4px;
+}
+
+.experience-match, .education-match {
+    margin-bottom: 15px;
+}
+
+/*-----------------  Responsive  ---------------------- */
+
+@media (max-width: 768px) {
+    .candidate-card {
+        flex-direction: column;
+    }
+    
+    .candidate-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px auto;
+    }
+    
+    .modal-candidate-meta {
+        grid-template-columns: 1fr;
+    }
+}

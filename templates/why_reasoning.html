@@ -1,0 +1,82 @@
+<!-- <--why_reasoning.html--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why This Rank?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+        }
+        .reasoning-section {
+            margin-bottom: 20px;
+        }
+        .reasoning-section h3 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .back-button {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-button a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .back-button a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Reasoning for Resume Ranking</h2>
+        <p><strong>Resume ID:</strong> {{ resume_id }}</p>
+        <p><strong>File Name:</strong> {{ filename }}</p>
+
+        <div class="reasoning-section">
+            <h3>Experience Match</h3>
+            <p>{{ reasoning.experience_match }}</p>
+        </div>
+
+        <div class="reasoning-section">
+            <h3>Skills Alignment</h3>
+            <p>{{ reasoning.skills_alignment }}</p>
+        </div>
+
+        <div class="reasoning-section">
+            <h3>Keyword Match Score</h3>
+            <p>{{ reasoning.keyword_match }}</p>
+        </div>
+
+        <div class="reasoning-section">
+            <h3>Overall Strengths & Weaknesses</h3>
+            <p>{{ reasoning.overall_summary }}</p>
+        </div>
+
+        <div class="back-button">
+            <a href="{{ url_for('index') }}">Back to Home</a>
+        </div>
+    </div>
+
+</body>
+</html>
