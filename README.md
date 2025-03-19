@@ -12,8 +12,13 @@ Vector Database Integration: Utilizes Pinecone for efficient storage and similar
 *Technology Stack*
 
 Backend: Flask, Python
+
 ML/AI: Google's Gemini 2.0 Flash LLM, Sentence Transformers
+
 Vector Database: Pinecone
+
 Frontend: HTML, CSS, JavaScript with Chart.js for visualizations
+
+
 
 ResuMatch helps recruiters make more informed hiring decisions by providing data-driven insights and comprehensive candidate evaluations through an intuitive interface.
